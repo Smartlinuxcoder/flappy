@@ -19,13 +19,13 @@ loadSprite("pipe", "sprites/pipe.png")
 
 
 scene("game", () => {
+	const initialScale = h / 512; // Adjust the initial scale as needed
 	// Set the gravity acceleration (pixels per second)
 	setGravity(1600);
 	const speed = -35000;
-	const PIPE_GAP = 200;
+	const PIPE_GAP = 200*initialScale;
 
 
-	const initialScale = h / 512; // Adjust the initial scale as needed
 
 	// Create a function to continuously add and scroll the background until the screen width is reached
 	function addBackground() {
@@ -67,23 +67,25 @@ scene("game", () => {
 
 
 	function producePipes() {
-		const offset = rand(-50, 50);
+		const offset = rand(-50, 50)* initialScale;
 
 		add([
 			sprite("pipe"),
-			pos(width(), height() / 2 + offset + PIPE_GAP / 2),
+			pos(width(), (height() / 2 + offset + PIPE_GAP / 2 )),
 			"pipe",
 			area(),
 			body({ isStatic: true }),
+			scale(initialScale),
 		]);
 
 		add([
 			sprite("pipe", { flipY: true }),
-			pos(width(), height() / 2 + offset - PIPE_GAP / 2 - 288),
+			pos(width(), (height() / 2 + offset - PIPE_GAP / 2 )),
 			/* 		origin("botleft"), */
 			"pipe",
 			area(),
 			body({ isStatic: true }),
+			scale(initialScale),
 		]);
 	}
 	function addBase() {
