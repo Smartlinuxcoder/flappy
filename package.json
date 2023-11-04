@@ -1,0 +1,16 @@
+{
+	"name": "flappy",
+	"scripts": {
+		"build": "esbuild --bundle src/main.js --outfile=www/main.js --minify",
+		"dev": "esbuild --bundle src/main.js --outfile=www/main.js --servedir=www",
+		"bundle": "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\""
+	},
+	"dependencies": {
+		"kaboom": "^3000.1.13"
+	},
+	"devDependencies": {
+		"esbuild": "^0.19.5",
+		"webpack": "^5.89.0",
+		"webpack-cli": "^5.1.4"
+	}
+}

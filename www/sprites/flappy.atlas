@@ -1,0 +1,9 @@
+flappy.png
+size:128,32
+repeat:none
+downflap
+bounds:38,2,34,24
+midflap
+bounds:74,2,34,24
+upflap
+bounds:2,2,34,24
