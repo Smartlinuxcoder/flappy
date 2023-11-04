@@ -22,8 +22,8 @@ scene("game", () => {
 	const initialScale = h / 512; // Adjust the initial scale as needed
 	// Set the gravity acceleration (pixels per second)
 	setGravity(1600);
-	const speed = -35000;
-	const PIPE_GAP = 200*initialScale;
+	const speed = -3500*initialScale;
+	const PIPE_GAP = 125*initialScale;
 
 
 
@@ -46,28 +46,29 @@ scene("game", () => {
 	const player = add([
 		sprite("downflap"),
 		pos(center()),
-/* 		area(),
-		body(), */
+ 		area(),
+		body(),
+		scale(initialScale)
 	]);
 
 
 
 	onKeyPress("space", () => {
 		// .isGrounded() is provided by body()
-		player.jump(400)
+		player.jump(700)
 	})
 	onClick(() => {
-		player.jump(400)
+		player.jump(700)
 	})
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
-/* 	player.onGround(() => {
+ 	player.onGround(() => {
 		debug.log("game over")
 		go("lose")
-	}) */
+	}) 
 
 
 	function producePipes() {
-		const offset = rand(-50, 50)* initialScale;
+		const offset = rand(-75, 75)* initialScale;
 
 		add([
 			sprite("pipe"),
@@ -80,8 +81,8 @@ scene("game", () => {
 
 		add([
 			sprite("pipe", { flipY: true }),
-			pos(width(), (height() / 2 + offset - PIPE_GAP / 2 )),
-			/* 		origin("botleft"), */
+			pos(width(), (height() / 2 + offset - PIPE_GAP / 2 - 320*initialScale)),
+/* 			origin('botleft'), */
 			"pipe",
 			area(),
 			body({ isStatic: true }),
@@ -146,7 +147,7 @@ scene("game", () => {
 		pipe.move(speed * dt(), 0);
 	});
 
-	loop(2, () => {
+	loop(initialScale, () => {
 		producePipes();
 	});
 });
