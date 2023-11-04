@@ -4,7 +4,8 @@ const { default: kaboom } = require("kaboom")
 // Start kaboom
 var w = window.innerWidth;
 var h = window.innerHeight;
-console.log(h)
+var score = 0;
+var highScore = 0;
 kaboom({
 	width: w, //228
 	height: h, //512
@@ -16,37 +17,34 @@ loadSprite("bg", "sprites/background-day.png")
 loadSprite("downflap", "sprites/downflap.png")
 loadSprite("base", "sprites/base.png")
 loadSprite("pipe", "sprites/pipe.png")
+loadFont("flappy-font", "sprites/flappy-font.ttf")
+const initialScale = h / 512; // Adjust the initial scale as needed
 
+function addBackground() {
+	let xPosition = 0;
+	while (xPosition < w) {
+		add([
+			sprite("bg"),
+			scale(initialScale),
+			pos(xPosition, 0),
+			/* 				layer("bg"), */
+		]);
+		xPosition += 228 * initialScale; // Move to the next sprite position
+	}
+}
 
 scene("game", () => {
-	const initialScale = h / 512; // Adjust the initial scale as needed
 	// Set the gravity acceleration (pixels per second)
 	setGravity(1600);
-	const speed = -3500*initialScale;
-	const PIPE_GAP = 125*initialScale;
-
-
-
-	// Create a function to continuously add and scroll the background until the screen width is reached
-	function addBackground() {
-		let xPosition = 0;
-		while (xPosition < w) {
-			add([
-				sprite("bg"),
-				scale(initialScale),
-				pos(xPosition, 0),
-				/* 				layer("bg"), */
-			]);
-			xPosition += 228 * initialScale; // Move to the next sprite position
-		}
-	}
+	const speed = -3500 * initialScale;
+	const PIPE_GAP = 125 * initialScale;
 
 	addBackground(); // Call the function to start the background
 
 	const player = add([
 		sprite("downflap"),
 		pos(center()),
- 		area(),
+		area(),
 		body(),
 		scale(initialScale)
 	]);
@@ -61,28 +59,29 @@ scene("game", () => {
 		player.jump(700)
 	})
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
- 	player.onGround(() => {
-		debug.log("game over")
-		go("lose")
-	}) 
+	player.onGround(() => {
+/* 		debug.log("game over") */
+		go("splash", score)
+	})
 
 
 	function producePipes() {
-		const offset = rand(-75, 75)* initialScale;
+		const offset = rand(-75, 75) * initialScale;
 
 		add([
 			sprite("pipe"),
-			pos(width(), (height() / 2 + offset + PIPE_GAP / 2 )),
+			pos(width(), (height() / 2 + offset + PIPE_GAP / 2)),
 			"pipe",
 			area(),
 			body({ isStatic: true }),
 			scale(initialScale),
+			{ passed: false }
 		]);
 
 		add([
 			sprite("pipe", { flipY: true }),
-			pos(width(), (height() / 2 + offset - PIPE_GAP / 2 - 320*initialScale)),
-/* 			origin('botleft'), */
+			pos(width(), (height() / 2 + offset - PIPE_GAP / 2 - 320 * initialScale)),
+			/* 			origin('botleft'), */
 			"pipe",
 			area(),
 			body({ isStatic: true }),
@@ -97,7 +96,7 @@ scene("game", () => {
 				scale(initialScale),
 				/* 	rect(width(), 48), */
 				area(),
-				pos(basex, h-h/5),
+				pos(basex, h - h / 5),
 				// Give objects a body() component if you don't want other solid objects pass through
 				body({ isStatic: true }),
 				"base"
@@ -109,7 +108,7 @@ scene("game", () => {
 			scale(initialScale),
 			/* 	rect(width(), 48), */
 			area(),
-			pos(basex, h-h/5),
+			pos(basex, h - h / 5),
 			// Give objects a body() component if you don't want other solid objects pass through
 			body({ isStatic: true }),
 			"base"
@@ -120,24 +119,23 @@ scene("game", () => {
 	function getFurthestRightXPosition(spriteName) {
 		const sprites = get(spriteName); // Get all sprites with the specified name
 		let furthestX = -Infinity;
-	  
+
 		sprites.forEach((sprite) => {
-		  if (sprite.pos.x + sprite.width > furthestX) {
-			furthestX = sprite.pos.x + sprite.width;
-		  }
+			if (sprite.pos.x + sprite.width > furthestX) {
+				furthestX = sprite.pos.x + sprite.width;
+			}
 		});
-	  
+
 		return furthestX;
-	  }
+	}
 	// Function to move the base
 	function moveBase() {
 		onUpdate("base", (base) => {
-			base.move(speed * dt(), 0); 
-
+			base.move(speed * dt(), 0);
 			// Reset the position of the base when it moves off-screen to create the illusion of endless scrolling
-			if (base.pos.x  < -672*initialScale/2) {
+			if (base.pos.x < -672 * initialScale / 2) {
 
-				base.moveTo(getFurthestRightXPosition("base")+ (336 * initialScale)-350, base.pos.y);
+				base.moveTo(getFurthestRightXPosition("base") + (336 * initialScale) - 350, base.pos.y);
 			}
 		});
 	}
@@ -145,31 +143,57 @@ scene("game", () => {
 
 	onUpdate("pipe", (pipe) => {
 		pipe.move(speed * dt(), 0);
+		if (pipe.passed === false && pipe.pos.x < player.pos.x) {
+			pipe.passed = true;
+			score += 1;
+			scoreText.text = score;
+		}
 	});
 
 	loop(initialScale, () => {
 		producePipes();
 	});
+
+	const scoreText = add([
+		text(score, {
+			font: "flappy-font",
+			size: 50
+		}),
+		pos(width() / 2, 0),
+		scale(initialScale),
+	]);
+
 });
 
-scene("lose", (score) => {
-	add([
-		sprite("bg")
-	])
-	add([
+scene("splash", (score) => {
+	addBackground()
+	console.log(score)
+	if (score != undefined) {
+		loadSprite("gameover","sprites/gameover.png")
+		add ([
+			sprite("gameover"),
+			pos(center()),
+			scale(initialScale),
+		])
+	}
+	const player = add([
 		sprite("downflap"),
-		pos(width() / 2, height() / 2 - 108),
-		/* scale(3), */
+		pos(center()),
+		scale(initialScale)
 	]);
-	// display score
+	if (score > highScore) {
+		highScore = score;
+	  }
 	add([
-		text("You lost"),
-		/* 		pos(width() / 2, height() / 2 + 108),
-				scale(3), */
+		text("High score:"+ highScore, {
+			font: "flappy-font",
+		}),
+		pos(width() / 2, 0),
+		scale(initialScale),
 	]);
 	// go back to game with space is pressed
 	onKeyDown("space", () => go("game"));
 	onClick(() => go("game"));
 });
 
-go("game")
+go("splash",)
