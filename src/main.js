@@ -2,15 +2,35 @@ const { default: kaboom } = require("kaboom")
 
 // Responding to gravity & jumping
 // Start kaboom
-var w = window.innerWidth;
-var h = window.innerHeight;
+let canvasWidth = document.documentElement.clientWidth;
+let canvasHeight = document.documentElement.clientHeight;
+let deviceMode = null;
+let heightStretch = 0;
+if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('Android')) {
+  // Code for PWA running on Android
+  deviceMode = "Android";
+  heightStretch = 75;
+} else if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('CrOS')) {
+  // Code for PWA running on Chrome OS
+  deviceMode = "ChromeOS";
+} else {
+  // Code for non-PWA behavior or other platforms
+  deviceMode = "Other";
+}
+var w = canvasWidth;
+var h = canvasHeight;
+/* var w = window.innerWidth;
+var h = window.innerHeight;  */
 var score = 0;
 var highScore = 0;
+
+
 kaboom({
 	width: w, //228
 	height: h, //512
 	scale: 1,
-	fullscreen: true,
+	
+/* 	fullscreen: true, */
 })
 
 loadSprite("bg", "sprites/background-day.png")
@@ -34,6 +54,7 @@ function addBackground() {
 }
 
 scene("game", () => {
+	score = 0
 	// Set the gravity acceleration (pixels per second)
 	setGravity(1600);
 	const speed = -3500 * initialScale;
@@ -60,7 +81,7 @@ scene("game", () => {
 	})
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
 	player.onGround(() => {
-/* 		debug.log("game over") */
+		/* 		debug.log("game over") */
 		go("splash", score)
 	})
 
@@ -75,7 +96,8 @@ scene("game", () => {
 			area(),
 			body({ isStatic: true }),
 			scale(initialScale),
-			{ passed: false }
+			{ passed: false },
+			offscreen({ destroy: true, distance: 2000 }),
 		]);
 
 		add([
@@ -86,6 +108,7 @@ scene("game", () => {
 			area(),
 			body({ isStatic: true }),
 			scale(initialScale),
+			offscreen({ destroy: true, distance: 2000 }),
 		]);
 	}
 	function addBase() {
@@ -162,33 +185,31 @@ scene("game", () => {
 		pos(width() / 2, 0),
 		scale(initialScale),
 	]);
-
 });
 
 scene("splash", (score) => {
 	addBackground()
-	console.log(score)
 	if (score != undefined) {
-		loadSprite("gameover","sprites/gameover.png")
-		add ([
+		loadSprite("gameover", "sprites/gameover.png")
+		add([
 			sprite("gameover"),
-			pos(center()),
+			pos((width()/2)-96*initialScale, height()/2),
 			scale(initialScale),
 		])
 	}
-	const player = add([
+/* 	const player = add([
 		sprite("downflap"),
 		pos(center()),
 		scale(initialScale)
-	]);
+	]); */
 	if (score > highScore) {
 		highScore = score;
-	  }
+	}
 	add([
-		text("High score:"+ highScore, {
+		text("High score:" + highScore, {
 			font: "flappy-font",
 		}),
-		pos(width() / 2, 0),
+		pos((width() / 2)-96*initialScale, 0),
 		scale(initialScale),
 	]);
 	// go back to game with space is pressed
