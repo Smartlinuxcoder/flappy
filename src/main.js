@@ -7,15 +7,15 @@ let canvasHeight = document.documentElement.clientHeight;
 let deviceMode = null;
 let heightStretch = 0;
 if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('Android')) {
-  // Code for PWA running on Android
-  deviceMode = "Android";
-  heightStretch = 75;
+	// Code for PWA running on Android
+	deviceMode = "Android";
+	heightStretch = 75;
 } else if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('CrOS')) {
-  // Code for PWA running on Chrome OS
-  deviceMode = "ChromeOS";
+	// Code for PWA running on Chrome OS
+	deviceMode = "ChromeOS";
 } else {
-  // Code for non-PWA behavior or other platforms
-  deviceMode = "Other";
+	// Code for non-PWA behavior or other platforms
+	deviceMode = "Other";
 }
 var w = canvasWidth;
 var h = canvasHeight;
@@ -29,8 +29,8 @@ kaboom({
 	width: w, //228
 	height: h, //512
 	scale: 1,
-	
-/* 	fullscreen: true, */
+
+	/* 	fullscreen: true, */
 })
 
 loadSprite("bg", "sprites/background-day.png")
@@ -67,7 +67,8 @@ scene("game", () => {
 		pos(center()),
 		area(),
 		body(),
-		scale(initialScale)
+		scale(initialScale),
+		"player"
 	]);
 
 
@@ -177,6 +178,10 @@ scene("game", () => {
 		producePipes();
 	});
 
+	onCollide("player", "pipe", () => {
+		go("splash", score);
+	})
+
 	const scoreText = add([
 		text(score, {
 			font: "flappy-font",
@@ -189,19 +194,11 @@ scene("game", () => {
 
 scene("splash", (score) => {
 	addBackground()
-	if (score != undefined) {
-		loadSprite("gameover", "sprites/gameover.png")
-		add([
-			sprite("gameover"),
-			pos((width()/2)-96*initialScale, height()/2),
-			scale(initialScale),
-		])
-	}
-/* 	const player = add([
-		sprite("downflap"),
-		pos(center()),
-		scale(initialScale)
-	]); */
+	/* 	const player = add([
+			sprite("downflap"),
+			pos(center()),
+			scale(initialScale)
+		]); */
 	if (score > highScore) {
 		highScore = score;
 	}
@@ -209,7 +206,41 @@ scene("splash", (score) => {
 		text("High score:" + highScore, {
 			font: "flappy-font",
 		}),
-		pos((width() / 2)-96*initialScale, 0),
+		pos((width() / 2) - 96 * initialScale, 0),
+		scale(initialScale),
+	]);
+
+	const player = add([
+		sprite("downflap"),
+		pos(center()),
+		scale(initialScale)
+	]);
+	// go back to game with space is pressed
+	onKeyDown("space", () => go("game"));
+	onClick(() => go("game"));
+});
+
+scene("gameover", (score) => {
+	addBackground()
+	loadSprite("gameover", "sprites/gameover.png")
+	add([
+		sprite("gameover"),
+		pos((width() / 2) - 96 * initialScale, height() / 2),
+		scale(initialScale),
+	])
+	/* 	const player = add([
+			sprite("downflap"),
+			pos(center()),
+			scale(initialScale)
+		]); */
+	if (score > highScore) {
+		highScore = score;
+	}
+	add([
+		text("High score:" + highScore, {
+			font: "flappy-font",
+		}),
+		pos((width() / 2) - 96 * initialScale, 0),
 		scale(initialScale),
 	]);
 	// go back to game with space is pressed
