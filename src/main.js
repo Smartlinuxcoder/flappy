@@ -83,7 +83,7 @@ scene("game", () => {
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
 	player.onGround(() => {
 		/* 		debug.log("game over") */
-		go("sgameover", score)
+		go("gameover", score)
 	})
 
 
@@ -170,7 +170,7 @@ scene("game", () => {
 		if (pipe.passed === false && pipe.pos.x < player.pos.x) {
 			pipe.passed = true;
 			score += 1;
-			scoreText.text = score;
+/* 			scoreText.text = score; */
 		}
 	});
 
@@ -181,7 +181,6 @@ scene("game", () => {
 	onCollide("player", "pipe", () => {
 		go("gameover", score);
 	})
-
 	const scoreText = add([
 		text(score, {
 			font: "flappy-font",
@@ -190,62 +189,69 @@ scene("game", () => {
 		pos(width() / 2, 0),
 		scale(initialScale),
 	]);
+	player.onUpdate(() => {
+		scoreText.text = score;
+		if (player.pos.y > height() + 30 || player.pos.y < -30) {
+			go("gameover", score);
+		}
+
+	});
 });
 
-scene("splash", (score) => {
-	addBackground()
-	/* 	const player = add([
+	scene("splash", (score) => {
+		addBackground()
+		/* 	const player = add([
+				sprite("downflap"),
+				pos(center()),
+				scale(initialScale)
+			]); */
+		if (score > highScore) {
+			highScore = score;
+		}
+		add([
+			text("High score:" + highScore, {
+				font: "flappy-font",
+			}),
+			pos((width() / 2) - 96 * initialScale, 0),
+			scale(initialScale),
+		]);
+
+		const player = add([
 			sprite("downflap"),
 			pos(center()),
 			scale(initialScale)
-		]); */
-	if (score > highScore) {
-		highScore = score;
-	}
-	add([
-		text("High score:" + highScore, {
-			font: "flappy-font",
-		}),
-		pos((width() / 2) - 96 * initialScale, 0),
-		scale(initialScale),
-	]);
+		]);
+		// go back to game with space is pressed
+		onKeyDown("space", () => go("game"));
+		onClick(() => go("game"));
+	});
 
-	const player = add([
-		sprite("downflap"),
-		pos(center()),
-		scale(initialScale)
-	]);
-	// go back to game with space is pressed
-	onKeyDown("space", () => go("game"));
-	onClick(() => go("game"));
-});
+	scene("gameover", (score) => {
+		addBackground()
+		loadSprite("gameover", "sprites/gameover.png")
+		add([
+			sprite("gameover"),
+			pos((width() / 2) - 96 * initialScale, height() / 2),
+			scale(initialScale),
+		])
+		/* 	const player = add([
+				sprite("downflap"),
+				pos(center()),
+				scale(initialScale)
+			]); */
+		if (score > highScore) {
+			highScore = score;
+		}
+		add([
+			text("High score:" + highScore, {
+				font: "flappy-font",
+			}),
+			pos((width() / 2) - 96 * initialScale, 0),
+			scale(initialScale),
+		]);
+		// go back to game with space is pressed
+		onKeyDown("space", () => go("game"));
+		onClick(() => go("game"));
+	});
 
-scene("gameover", (score) => {
-	addBackground()
-	loadSprite("gameover", "sprites/gameover.png")
-	add([
-		sprite("gameover"),
-		pos((width() / 2) - 96 * initialScale, height() / 2),
-		scale(initialScale),
-	])
-	/* 	const player = add([
-			sprite("downflap"),
-			pos(center()),
-			scale(initialScale)
-		]); */
-	if (score > highScore) {
-		highScore = score;
-	}
-	add([
-		text("High score:" + highScore, {
-			font: "flappy-font",
-		}),
-		pos((width() / 2) - 96 * initialScale, 0),
-		scale(initialScale),
-	]);
-	// go back to game with space is pressed
-	onKeyDown("space", () => go("game"));
-	onClick(() => go("game"));
-});
-
-go("splash",)
+	go("splash")
