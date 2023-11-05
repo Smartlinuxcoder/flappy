@@ -83,7 +83,7 @@ scene("game", () => {
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
 	player.onGround(() => {
 		/* 		debug.log("game over") */
-		go("splash", score)
+		go("sgameover", score)
 	})
 
 
@@ -179,7 +179,7 @@ scene("game", () => {
 	});
 
 	onCollide("player", "pipe", () => {
-		go("splash", score);
+		go("gameover", score);
 	})
 
 	const scoreText = add([
