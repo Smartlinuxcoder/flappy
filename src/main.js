@@ -2,23 +2,15 @@ const { default: kaboom } = require("kaboom")
 
 // Responding to gravity & jumping
 // Start kaboom
-let canvasWidth = document.documentElement.clientWidth;
-let canvasHeight = document.documentElement.clientHeight;
-let deviceMode = null;
-let heightStretch = 0;
-if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('Android')) {
-	// Code for PWA running on Android
-	deviceMode = "Android";
-	heightStretch = 75;
-} else if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('CrOS')) {
-	// Code for PWA running on Chrome OS
-	deviceMode = "ChromeOS";
-} else {
-	// Code for non-PWA behavior or other platforms
-	deviceMode = "Other";
+var w = window.screen.width;
+var h = window.screen.height;
+
+if(window.devicePixelRatio < 1){
+  w = window.screen.width/window.devicePixelRatio;
+  h = window.screen.height/window.devicePixelRatio;
 }
-var w = canvasWidth;
-var h = canvasHeight;
+/* var w = canvasWidth;
+var h = canvasHeight; */
 /* var w = window.innerWidth;
 var h = window.innerHeight;  */
 var score = 0;
