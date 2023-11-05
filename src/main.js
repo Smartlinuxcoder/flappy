@@ -2,8 +2,8 @@ const { default: kaboom } = require("kaboom")
 
 // Responding to gravity & jumping
 // Start kaboom
-var w = window.screen.width
-var h = window.screen.height
+var w = 412
+var h = 915
 /* var w = canvasWidth;
 var h = canvasHeight; */
 /* var w = window.innerWidth;
