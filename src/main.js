@@ -61,7 +61,7 @@ scene("game", () => {
 	// Set the gravity acceleration (pixels per second)
 	setGravity(1600);
 	const speed = -3500 * initialScale;
-	const PIPE_GAP = 200 * initialScale;
+	const PIPE_GAP = 150 * initialScale;
 
 	addBackground(); // Call the function to start the background
 
