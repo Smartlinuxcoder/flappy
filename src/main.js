@@ -15,9 +15,9 @@ var highScore = 0;
 kaboom({
 	width: w, //228
 	height: h, //512
-	scale: 4,
+	scale: 1,
 
-	/* 	fullscreen: true, */
+ 	fullscreen: true,
 })
 
 loadSprite("bg", "sprites/background-day.png")
