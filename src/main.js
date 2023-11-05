@@ -79,10 +79,10 @@ scene("game", () => {
 
 	onKeyPress("space", () => {
 		// .isGrounded() is provided by body()
-		player.jump(700)
+		player.jump(250*initialScale)
 	})
 	onClick(() => {
-		player.jump(700)
+		player.jump(250*initialScale)
 	})
 	// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
 	player.onGround(() => {
