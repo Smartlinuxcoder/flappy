@@ -37,7 +37,10 @@ loadSprite("bg", "sprites/background-day.png")
 loadSprite("downflap", "sprites/downflap.png")
 loadSprite("base", "sprites/base.png")
 loadSprite("pipe", "sprites/pipe.png")
+loadSprite("message", "sprites/message.png")
 loadFont("flappy-font", "sprites/flappy-font.ttf")
+loadSound("point", "sprites/point.wav")
+loadSound("die", "sprites/die.wav")
 const initialScale = h / 512; // Adjust the initial scale as needed
 
 function addBackground() {
@@ -67,6 +70,7 @@ scene("game", () => {
 		pos(center()),
 		area(),
 		body(),
+		anchor("center"),
 		scale(initialScale),
 		"player"
 	]);
@@ -170,6 +174,7 @@ scene("game", () => {
 		if (pipe.passed === false && pipe.pos.x < player.pos.x) {
 			pipe.passed = true;
 			score += 1;
+			play("point")
 /* 			scoreText.text = score; */
 		}
 	});
@@ -187,6 +192,7 @@ scene("game", () => {
 			size: 50
 		}),
 		pos(width() / 2, 0),
+		anchor("top"),
 		scale(initialScale),
 	]);
 	player.onUpdate(() => {
@@ -212,14 +218,16 @@ scene("game", () => {
 			text("High score:" + highScore, {
 				font: "flappy-font",
 			}),
-			pos((width() / 2) - 96 * initialScale, 0),
+			pos(width() / 2, 0 ),
 			scale(initialScale),
+			anchor("top")
 		]);
 
 		const player = add([
-			sprite("downflap"),
+			sprite("message"),
 			pos(center()),
-			scale(initialScale)
+			anchor("center"),
+			scale(initialScale),
 		]);
 		// go back to game with space is pressed
 		onKeyDown("space", () => go("game"));
@@ -228,11 +236,13 @@ scene("game", () => {
 
 	scene("gameover", (score) => {
 		addBackground()
+		play("die")
 		loadSprite("gameover", "sprites/gameover.png")
 		add([
 			sprite("gameover"),
-			pos((width() / 2) - 96 * initialScale, height() / 2),
+			pos(center()),
 			scale(initialScale),
+			anchor("center"),
 		])
 		/* 	const player = add([
 				sprite("downflap"),
@@ -246,8 +256,9 @@ scene("game", () => {
 			text("High score:" + highScore, {
 				font: "flappy-font",
 			}),
-			pos((width() / 2) - 96 * initialScale, 0),
+			pos(width() / 2, 0 ),
 			scale(initialScale),
+			anchor("top")
 		]);
 		// go back to game with space is pressed
 		onKeyDown("space", () => go("game"));
