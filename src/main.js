@@ -2,13 +2,8 @@ const { default: kaboom } = require("kaboom")
 
 // Responding to gravity & jumping
 // Start kaboom
-var w = window.screen.width;
-var h = window.screen.height;
-
-if(window.devicePixelRatio < 1){
-  w = window.screen.width/window.devicePixelRatio;
-  h = window.screen.height/window.devicePixelRatio;
-}
+var w = document.documentElement.clientWidth
+var h = document.documentElement.clientHeight
 /* var w = canvasWidth;
 var h = canvasHeight; */
 /* var w = window.innerWidth;
