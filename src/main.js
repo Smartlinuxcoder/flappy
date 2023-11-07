@@ -2,34 +2,19 @@ const { default: kaboom } = require("kaboom")
 
 // Responding to gravity & jumping
 // Start kaboom
-let canvasWidth = document.documentElement.clientWidth;
-let canvasHeight = document.documentElement.clientHeight;
-let deviceMode = null;
-let heightStretch = 0;
-if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('Android')) {
-  // Code for PWA running on Android
-  deviceMode = "Android";
-  heightStretch = 75;
-} else if ((window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.fullscreen) && navigator.userAgent.includes('CrOS')) {
-  // Code for PWA running on Chrome OS
-  deviceMode = "ChromeOS";
-} else {
-  // Code for non-PWA behavior or other platforms
-  deviceMode = "Other";
-}
-var w = canvasWidth
-var h = canvasHeight + heightStretch
+/* var w = canvasWidth
+var h = canvasHeight + heightStretch */
 /* var w = canvasWidth;
 var h = canvasHeight; */
-/* var w = window.innerWidth;
-var h = window.innerHeight;  */
+var w = window.innerWidth;
+var h = window.innerHeight;  
 var score = 0;
 var highScore = 0;
 
 
 kaboom({
-	width: canvasWidth,
-	height: canvasHeight + heightStretch,
+	width: w,
+	height: h,
 	scale: 1,
 
  	fullscreen: true,
@@ -208,6 +193,7 @@ scene("game", () => {
 
 	scene("splash", (score) => {
 		addBackground()
+
 		/* 	const player = add([
 				sprite("downflap"),
 				pos(center()),
