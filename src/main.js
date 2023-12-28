@@ -13,8 +13,8 @@ var highScore = 0;
 
 
 kaboom({
-	width: w,
-	height: h,
+/* 	width: w,
+	height: h, */
 	scale: 1,
 
  	fullscreen: true,
